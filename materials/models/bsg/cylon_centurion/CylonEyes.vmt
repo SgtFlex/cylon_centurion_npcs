@@ -1,4 +1,6 @@
-"UnlitGeneric"
+"VertexLitGeneric"
 {
 	"$basetexture" 			"models\bsg\cylon_centurion\grey"
+	$color2 "[1 0.2 0.2]"
 }
+
