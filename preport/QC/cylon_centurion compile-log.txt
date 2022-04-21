@@ -1,0 +1,79 @@
+// Created by Crowbar 0.71
+
+  Compiling "cylon_centurion.qc" ...
+    Output from compiler "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\bin\studiomdl.exe": 
+      qdir:    "g:\program files (x86)\steam\steamapps\common\garrysmod\garrysmod\addons\cylon_centurion_npcs\preport\qc\"
+      gamedir: "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\"
+      g_path:  "cylon_centurion.qc"
+      Building binary model files...
+      Working on "cylon_centurion.qc"
+      SMD MODEL cylon_test.smd
+      SMD MODEL anims/WalkF_Relaxed.smd
+      Processing LOD for material: Silver
+      Processing LOD for material: MetalBlack
+      @Walk : 0 - 50 : 0.0 0.0 0.0 root: CATRigPelvis
+      ---------------------
+      writing G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models/bsg/cylon_centurion.mdl:
+      bones        16012 bytes (55)
+         animation       x       y       ips    angle
+        @reference    0.00    0.00 :     inf (   0.00) 0.0
+      animations    5912 bytes (2 anims) (52 frames) [0:01]
+      sequences      652 bytes (2 seq) 
+      ik/pose        164 bytes
+      eyeballs         0 bytes (0 eyeballs)
+      flexes           0 bytes (0 flexes)
+      textures       136 bytes
+      keyvalues        0 bytes
+      bone transforms     7544 bytes
+      bone flex driver       0 bytes
+      collision        0 bytes
+      total        31708
+      ---------------------
+      writing G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models/bsg/cylon_centurion.vvd:
+      vertices   3083136 bytes (64232 vertices)
+      tangents   1027712 bytes (64232 vertices)
+      total      4110912 bytes
+      ---------------------
+      Generating optimized mesh "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models/bsg/cylon_centurion.sw.vtx":
+      body parts:         8 bytes
+      models:            20 bytes
+      model LODs:        12 bytes
+      meshes:            18 bytes
+      strip groups:      50 bytes
+      strips:            54 bytes
+      verts:         578088 bytes
+      indices:       462162 bytes
+      bone changes:       8 bytes
+      everything:   1040444 bytes
+      ---------------------
+      Generating optimized mesh "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models/bsg/cylon_centurion.dx80.vtx":
+      body parts:         8 bytes
+      models:            20 bytes
+      model LODs:        12 bytes
+      meshes:            18 bytes
+      strip groups:      50 bytes
+      strips:           189 bytes
+      verts:         585432 bytes
+      indices:       462162 bytes
+      bone changes:     856 bytes
+      everything:   1048771 bytes
+      ---------------------
+      Generating optimized mesh "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models/bsg/cylon_centurion.dx90.vtx":
+      body parts:         8 bytes
+      models:            20 bytes
+      model LODs:        12 bytes
+      meshes:            18 bytes
+      strip groups:      50 bytes
+      strips:            81 bytes
+      verts:         578484 bytes
+      indices:       462162 bytes
+      bone changes:     584 bytes
+      everything:   1041443 bytes
+      
+      Completed "cylon_centurion.qc"
+    CROWBAR: Moved compiled model file "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models\bsg\cylon_centurion.dx80.vtx" to "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\addons\cylon_centurion_npcs\models\bsg"
+    CROWBAR: Moved compiled model file "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models\bsg\cylon_centurion.dx90.vtx" to "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\addons\cylon_centurion_npcs\models\bsg"
+    CROWBAR: Moved compiled model file "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models\bsg\cylon_centurion.mdl" to "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\addons\cylon_centurion_npcs\models\bsg"
+    CROWBAR: Moved compiled model file "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models\bsg\cylon_centurion.sw.vtx" to "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\addons\cylon_centurion_npcs\models\bsg"
+    CROWBAR: Moved compiled model file "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\models\bsg\cylon_centurion.vvd" to "G:\Program Files (x86)\Steam\steamapps\common\GarrysMod\garrysmod\addons\cylon_centurion_npcs\models\bsg"
+  ... Compiling "cylon_centurion.qc" finished. Check above for any errors.

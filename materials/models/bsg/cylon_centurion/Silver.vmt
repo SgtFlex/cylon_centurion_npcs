@@ -1,0 +1,17 @@
+"VertexLitGeneric"
+{
+	"$basetexture" 			"models\bsg\cylon_centurion\white"
+	"$bumpmap" 			"models\bsg\cylon_centurion\cylon_nrml"
+	"$color2"				"[0.6 0.6 0.6]"
+	"$normalmapalphaenvmapmask"	"1"
+	"$phong" "1"
+	"$phongboost" "10"
+	"$PhongExponent" "3"
+	"$phongalbedotint" "1"
+	"$phongfresnelranges" "[3 5 7]"
+	"$phongexponenttexture" "models/sentinels/phongExpTexture"
+	"$detail" "models/sentinels/scratchedmetal"
+	"$detailscale" 10
+	"$detailblendfactor" 1
+	"$detailblendmode" 0
+}
