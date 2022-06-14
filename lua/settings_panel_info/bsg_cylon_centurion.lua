@@ -8,10 +8,22 @@ return {
                     convar = "vj_bsg_centurion_health",
                     desc = "Controls the amount of health the Cylon Centurion spawns with."
                 },
-                ["Damage Multiplier"] = {
+                ["Bullet Damage Multiplier"] = {
                     default = 1,
                     convar = "vj_bsg_centurion_damage",
-                    desc = "Multiplies the Cylon Centurion's damage by X.",
+                    desc = "Multiplies the Cylon Centurion's bullet damage by X.",
+                    panel = {decimals = 2}
+                },
+                ["Bullet Spread Multiplier"] = {
+                    default = 1,
+                    convar = "vj_bsg_centurion_accuracy",
+                    desc = "Multiplies the Cylon Centurion's bullet spread by X.",
+                    panel = {decimals = 2}
+                },
+                ["Melee Damage Multiplier"] = {
+                    default = 1,
+                    convar = "vj_bsg_centurion_melee_damage",
+                    desc = "Multiplies the Cylon Centurion's melee damage by X.",
                     panel = {decimals = 2}
                 },
                 ["NPC Incoming Damage Multiplier"] = {

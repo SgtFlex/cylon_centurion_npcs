@@ -47,10 +47,13 @@ ENT.NoChaseAfterCertainRange_Type = "Regular" -- "Regular" = Default behavior | 
 
 ENT.GunDamage = nil
 ENT.Vulnerability = nil
+ENT.Accuracy = 0.05
 function ENT:UseConvars()
     self.GunDamageMult = GetConVar("vj_bsg_centurion_damage"):GetFloat()
     self.StartHealth = GetConVar("vj_bsg_centurion_health"):GetFloat()
     self.Vulnerability = GetConVar("vj_bsg_centurion_npc_inc_damage"):GetFloat()
+    self.Accuracy = GetConVar("vj_bsg_centurion_accuracy"):GetFloat()
+    self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVar("vj_bsg_centurion_melee_damage"):GetFloat()
     self:SetHealth(self.StartHealth)
     self:SetMaxHealth(self.StartHealth)
 end
@@ -86,7 +89,7 @@ local inputs = {
         self.RotateSound = CreateSound(self, "cylon/idle/Turn_loop.wav")
         self.RotateSound:PlayEx(0.5, 85)
         timer.Simple(1, function()
-            if (!IsValid(self.RotateSound)) then return end
+            if (!self.RotateSound) then return end
             self.RotateSound:Stop()
         end)
     end,
@@ -136,7 +139,7 @@ function ENT:CustomRangeAttackCode()
             Tracer = 0,
             Dir = (pos - self:GetAttachment(self:LookupAttachment(muzzles[muzzle]))["Pos"]):GetNormalized(),
             Src = self:GetAttachment(self:LookupAttachment(muzzles[muzzle]))["Pos"],
-            Spread = Vector(0.04, 0.04, 0)
+            Spread = Vector(0.06 * self.Accuracy, 0.06 * self.Accuracy, 0)
         }
         self:FireBullets(bulletInfo)
     end
