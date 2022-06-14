@@ -127,8 +127,6 @@ function ENT:CustomRangeAttackCode()
     self:EmitSound(self.SoundTbl_Fire[math.random(1, (#self.SoundTbl_Fire))], 75, math.random(80, 120), 1)
     for i = 1, 2 do
         muzzle = math.random(1, 3) + 3*(i-1)
-        print(muzzles[muzzle])
-        print(muzzle)
         ParticleEffectAttach("vj_rifle_full", 4, self, self:LookupAttachment(muzzles[muzzle]))
         local bulletInfo = {
             Attacker = self,
