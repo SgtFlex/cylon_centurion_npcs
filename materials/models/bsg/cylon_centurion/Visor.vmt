@@ -1,0 +1,30 @@
+"UnlitGeneric"
+{
+	"$basetexture" 			"models\bsg\cylon_centurion\eye_diff"
+	$cvar "[.5 1]"
+	$svar "[1 1]"
+	$rvar -90
+	$tvar "[0 1]"
+
+	Proxies
+	{
+		"Sine"
+		{
+			resultVar		$cvar[1]
+			timeoffset		0
+			sineperiod	1.2
+			sinemin		0.00
+			sinemax		0.9
+		}
+		"TextureTransform"
+		{
+			centerVar "$cvar"
+			scaleVar "$svar"
+			rotateVar "$rvar"
+			translateVar "$tvar"
+			resultVar "$basetexturetransform"
+		}
+	}	
+
+}
+
