@@ -3,15 +3,15 @@
 	"$basetexture" 			"models\bsg\cylon_centurion\white"
 	"$bumpmap" 			"models\bsg\cylon_centurion\cylon_nrml"
 	"$envmap" 			"env_cubemap"
-	"$envmaptint" 			"[0.45 0.45 0.45]"
+	"$envmaptint" 			"[0.2 0.2 0.2]"
 	"$color2"				"[0.45 0.45 0.45]"
 	"$normalmapalphaenvmapmask"	"1"
 	"$phong" "1"
-	"$phongboost" "0.15"
+	"$phongboost" "0.075"
 	"$PhongExponent" "5"
 	"$phongalbedotint" "1"
 	"$phongfresnelranges" "[3 5 7]"
-	"$detail" "models/sentinels/scratchedmetal"
+	"$detail" "models/bsg/scratchedmetal"
 	"$detailscale" 30
 	"$detailblendfactor" 1
 	"$detailblendmode" 0	

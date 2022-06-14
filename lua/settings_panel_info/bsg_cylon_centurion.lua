@@ -4,7 +4,7 @@ return {
         ["Settings"] = {
             controls = {
                 ["Health"] = {
-                    default = 500,
+                    default = 1000,
                     convar = "vj_bsg_centurion_health",
                     desc = "Controls the amount of health the Cylon Centurion spawns with."
                 },

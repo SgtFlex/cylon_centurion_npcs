@@ -28,20 +28,20 @@ ENT.TimeUntilMeleeAttackDamage = 1 -- This counted in seconds | This calculates 
 ENT.VJ_NPC_Class = {"CLASS_CYLON"} -- NPCs with the same class with be allied to each other
 ENT.MeleeAttackDamageType = DMG_CLUB -- Type of Damage
 
-ENT.StartHealth = 500 -- The starting health of the NPC
+ENT.StartHealth = 1000 -- The starting health of the NPC
 ENT.HasRangeAttack = true -- Should the SNPC have a range attack?
 ENT.AnimTbl_RangeAttack = {} -- Range Attack Animations
 ENT.TimeUntilRangeAttackProjectileRelease = 0 -- How much time until the projectile code is ran?
 ENT.NextRangeAttackTime = 0.075 -- How much time until it can use a range attack?
 ENT.RangeAttackReps = 1 -- How many times does it run the projectile code?
-ENT.RangeToMeleeDistance = 300 -- How close does it have to be until it uses melee?
+ENT.RangeToMeleeDistance = 150 -- How close does it have to be until it uses melee?
 ENT.DisableDefaultRangeAttackCode = true -- When true, it won't spawn the range attack entity, allowing you to make your own
 ENT.NextAnyAttackTime_Range = 0.075 -- How much time until it can use any attack again? | Counted in Seconds
 -- ENT.AnimTbl_IdleStand = {ACT_IDLE_ALERTED}
 ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when performing a range attack?
 
-ENT.NoChaseAfterCertainRange = false -- Should the SNPC not be able to chase when it's between number x and y?
-ENT.NoChaseAfterCertainRange_FarDistance = 2000 -- How far until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
+ENT.NoChaseAfterCertainRange = true -- Should the SNPC not be able to chase when it's between number x and y?
+ENT.NoChaseAfterCertainRange_FarDistance = 500 -- How far until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
 ENT.NoChaseAfterCertainRange_CloseDistance = 300 -- How near until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
 ENT.NoChaseAfterCertainRange_Type = "Regular" -- "Regular" = Default behavior | "OnlyRange" = Only does it if it's able to range attack
 
@@ -130,13 +130,13 @@ function ENT:CustomRangeAttackCode()
         ParticleEffectAttach("vj_rifle_full", 4, self, self:LookupAttachment(muzzles[muzzle]))
         local bulletInfo = {
             Attacker = self,
-            Damage = 1 * self.GunDamageMult,
+            Damage = 1.75 * self.GunDamageMult,
             Force = 10,
             Num = 1,
             Tracer = 0,
             Dir = (pos - self:GetAttachment(self:LookupAttachment(muzzles[muzzle]))["Pos"]):GetNormalized(),
             Src = self:GetAttachment(self:LookupAttachment(muzzles[muzzle]))["Pos"],
-            Spread = Vector(0.03, 0.03, 0)
+            Spread = Vector(0.04, 0.04, 0)
         }
         self:FireBullets(bulletInfo)
     end
