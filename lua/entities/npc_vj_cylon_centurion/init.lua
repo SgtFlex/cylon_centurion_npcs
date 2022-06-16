@@ -39,6 +39,8 @@ ENT.DisableDefaultRangeAttackCode = true -- When true, it won't spawn the range 
 ENT.NextAnyAttackTime_Range = 0.075 -- How much time until it can use any attack again? | Counted in Seconds
 -- ENT.AnimTbl_IdleStand = {ACT_IDLE_ALERTED}
 ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when performing a range attack?
+ENT.RangeAttackAnimationFaceEnemy = false -- Should it face the enemy while playing the range attack animation?
+
 
 ENT.NoChaseAfterCertainRange = true -- Should the SNPC not be able to chase when it's between number x and y?
 ENT.NoChaseAfterCertainRange_FarDistance = 500 -- How far until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
@@ -127,7 +129,7 @@ function ENT:CustomRangeAttackCode()
     if (!IsValid(self:GetEnemy())) then return end
     local pos = self:GetEnemy():GetPos() + self:GetEnemy():OBBCenter()
     self:VJ_ACT_PLAYACTIVITY("vjges_Shooting_Gesture", false, 0, true)
-    self:EmitSound(self.SoundTbl_Fire[math.random(1, (#self.SoundTbl_Fire))], 75, math.random(80, 120), 1)
+    self:EmitSound(self.SoundTbl_Fire[math.random(1, (#self.SoundTbl_Fire))], 90, math.random(80, 120), 1)
     for i = 1, 2 do
         muzzle = math.random(1, 3) + 3*(i-1)
         ParticleEffectAttach("vj_rifle_full", 4, self, self:LookupAttachment(muzzles[muzzle]))
