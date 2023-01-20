@@ -1,10 +1,8 @@
 "VertexLitGeneric"
 {
-	"$basetexture" 			"models\bsg\cylon_centurion\white"
-	"$bumpmap" 			"models\bsg\cylon_centurion\cylon_nrml"
-	"$envmap" 			"env_cubemap"
-	"$envmaptint" 			"[0.2 0.2 0.2]"
-	"$color2"				"[0.45 0.45 0.45]"
+	"$basetexture" 			"models\bsg\cylon_centurion\circuit_diff"
+	"$bumpmap" 			"models\bsg\cylon_centurion\circuit_nrml"
+	//"$color2"				"[0.45 0.45 0.45]"
 	"$normalmapalphaenvmapmask"	"1"
 	"$phong" "1"
 	"$phongboost" "0.075"
