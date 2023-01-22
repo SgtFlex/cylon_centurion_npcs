@@ -171,7 +171,6 @@ local inputs = {
     end,
 }
 
---local peepeepoopoo
 function ENT:UseConvars()
     self.GunDamageMult = GetConVar("vj_bsg_centurion_damage"):GetFloat()
     self.StartHealth = GetConVar("vj_bsg_centurion_health"):GetFloat()
