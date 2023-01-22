@@ -48,11 +48,21 @@ ENT.NoChaseAfterCertainRange_FarDistance = 500 -- How far until it can chase aga
 ENT.NoChaseAfterCertainRange_CloseDistance = 300 -- How near until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
 ENT.NoChaseAfterCertainRange_Type = "Regular" -- "Regular" = Default behavior | "OnlyRange" = Only does it if it's able to range attack
 
+
+
 ENT.GunDamage = nil
 ENT.Vulnerability = nil
 ENT.Accuracy = 0.05
 
 ENT.Limbs = {
+    [500] = {
+        Health = 500,
+        bodygroup = 0,
+        gibs = {},
+        removed = false,
+        extra = (function(self, dmginfo)
+        end)
+    },
     [501] = {
         Health = 300,
         bodygroup = 1,
@@ -122,22 +132,9 @@ ENT.Limbs = {
         end)
     },
 }
-function ENT:UseConvars()
-    self.GunDamageMult = GetConVar("vj_bsg_centurion_damage"):GetFloat()
-    self.StartHealth = GetConVar("vj_bsg_centurion_health"):GetFloat()
-    self.Vulnerability = GetConVar("vj_bsg_centurion_npc_inc_damage"):GetFloat()
-    self.Accuracy = GetConVar("vj_bsg_centurion_accuracy"):GetFloat()
-    self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVar("vj_bsg_centurion_melee_damage"):GetFloat()
-    self:SetHealth(self.StartHealth)
-    self:SetMaxHealth(self.StartHealth)
-end
-
-function ENT:CustomOnInitialize()
-    self:UseConvars()
-    self:SetCollisionBounds(Vector(-15, -15, 0), Vector(15, 15, 90))
-end
 
 ENT.RotateSound = nil
+
 local inputs = {
     ["Step"] = function(self)
         self:EmitSound(self.SoundTbl_Step[math.random(1, #self.SoundTbl_Step)], 80, math.random(75, 145), 0.35)
@@ -174,14 +171,41 @@ local inputs = {
     end,
 }
 
+
+function ENT:UseConvars()
+    self.GunDamageMult = GetConVar("vj_bsg_centurion_damage"):GetFloat()
+    self.StartHealth = GetConVar("vj_bsg_centurion_health"):GetFloat()
+    self.Vulnerability = GetConVar("vj_bsg_centurion_npc_inc_damage"):GetFloat()
+    self.Accuracy = GetConVar("vj_bsg_centurion_accuracy"):GetFloat()
+    self.MeleeAttackDamage = self.MeleeAttackDamage * GetConVar("vj_bsg_centurion_melee_damage"):GetFloat()
+    self:SetHealth(self.StartHealth)
+    self:SetMaxHealth(self.StartHealth)
+end
+
+function ENT:CustomOnInitialize()
+    self:UseConvars()
+    self:SetCollisionBounds(Vector(-15, -15, 0), Vector(15, 15, 90))
+end
+
+
+
 function ENT:CustomOnAcceptInput(key,activator,caller,data)
 	if inputs[key] then inputs[key](self) end
 end
 
 function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo, hitgroup)
-    if (self:Health() <= self:GetMaxHealth()/2) then
-        self:SetBodygroup(0, 1)
+    local dmgpos = dmginfo:GetDamagePosition()
+    dmgpos.z = 0
+    local pos = self:GetPos()
+    pos.z = 0
+    local dot = self:GetForward():Dot((dmgpos - pos):GetNormalized())
+    local x = self:GetRight():Dot((dmgpos - pos):GetNormalized())
+    local finalAng = math.deg(math.acos(dot))
+    if (x > 0) then
+        finalAng = finalAng * -1
     end
+    self:SetPoseParameter("hit_angle", finalAng)
+    self:AddGesture(ACT_FLINCH_PHYSICS, true)
     if (dmginfo:GetAttacker():IsNPC()) then
         dmginfo:ScaleDamage(self.Vulnerability)
     end
