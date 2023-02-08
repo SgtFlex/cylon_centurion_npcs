@@ -13,4 +13,26 @@
 	"$detailscale" 30
 	"$detailblendfactor" 1
 	"$detailblendmode" 0	
+	$color "[0 0 0]"
+	$avar 0
+	proxies
+	{
+		sine
+		{
+			sineperiod	2.3
+			sinemin		0
+			sinemax		1
+			timeoffset 2
+			resultvar	"$avar"
+		}
+
+		sine
+		{
+			sineperiod	1.5
+			sinemin		.75
+			sinemax		3
+			timeoffset		$avar
+			resultvar	"$color"
+		}
+	}
 }

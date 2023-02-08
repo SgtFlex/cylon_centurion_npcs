@@ -1,0 +1,6 @@
+Release 2.2 Early Preview (1/??/23)
+
+-Added several animation SFX triggers
+-Added PFX to damage state
+-Added light illum to material when damaged
+-Added several sounds

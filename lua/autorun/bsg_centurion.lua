@@ -14,6 +14,7 @@ if VJExists == true then
 	--NOTE: The following code is commented out so the game doesn't run it! When copying one of the options below, make sure to put it outside of the comment box!
 	
 	VJ.AddNPC("Cylon Centurion", "npc_vj_cylon_centurion", vCat) -- Adds a NPC to the spawnmenu
+	game.AddParticles("particles/bsg_particles.pcf")
 		-- Parameters:
 			-- First is the name, second is the class name
 			-- Third is the category that it should be in

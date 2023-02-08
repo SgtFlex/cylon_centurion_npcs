@@ -2,7 +2,24 @@ AddCSLuaFile("shared.lua")
 include('shared.lua')
 
 ENT.SoundTbl_Step = {
+    "cylon/footstep/step1.ogg",
     "cylon/footstep/step2.ogg",
+}
+
+ENT.SoundTbl_StabDirt = {
+    "cylon/footstep/stab01.ogg",
+    "cylon/footstep/stab02.ogg",
+}
+ENT.SoundTbl_Scrape = {
+    "cylon/footstep/scrape01.ogg",
+    "cylon/footstep/scrape02.ogg",
+    "cylon/footstep/scrape03.ogg",
+    "cylon/footstep/scrape04.ogg",
+}
+
+ENT.SoundTbl_Slash = {
+    "cylon/melee/slash01.ogg",
+    "cylon/melee/slash02.ogg",
 }
 
 ENT.SoundTbl_Raise = {
@@ -40,6 +57,7 @@ ENT.NextAnyAttackTime_Range = 0.075 -- How much time until it can use any attack
 -- ENT.AnimTbl_IdleStand = {ACT_IDLE_ALERTED}
 ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when performing a range attack?
 ENT.RangeAttackAnimationFaceEnemy = true -- Should it face the enemy while playing the range attack animation?
+ENT.DisableRangeAttackAnimation = true -- if true, it will disable the animation code
 
 
 
@@ -48,23 +66,103 @@ ENT.NoChaseAfterCertainRange_FarDistance = 500 -- How far until it can chase aga
 ENT.NoChaseAfterCertainRange_CloseDistance = 300 -- How near until it can chase again? | "UseRangeDistance" = Use the number provided by the range attack instead
 ENT.NoChaseAfterCertainRange_Type = "Regular" -- "Regular" = Default behavior | "OnlyRange" = Only does it if it's able to range attack
 
+ENT.CanFlinch = 1
+ENT.FlinchChance = 4 -- Chance of it flinching from 1 to x | 1 will make it always flinch
+ENT.HitGroupFlinching_DefaultWhenNotHit = false -- If it uses hitgroup flinching, should it do the regular flinch if it doesn't hit any of the specified hitgroups?
+
+ENT.HitGroupFlinching_Values = {
+    {
+        HitGroup = {500},
+        Animation = {ACT_FLINCH_CHEST}
+    },
+    {
+        HitGroup = {501},
+        Animation = {ACT_FLINCH_HEAD}
+    },
+    {
+        HitGroup = {502},
+        Animation = {ACT_FLINCH_RIGHTARM}
+    },
+    {
+        HitGroup = {503},
+        Animation = {ACT_FLINCH_LEFTARM}
+    },
+    {
+        HitGroup = {504},
+        Animation = {ACT_FLINCH_RIGHTLEG}
+    },
+    {
+        HitGroup = {505},
+        Animation = {ACT_FLINCH_LEFTLEG}
+    }
+} -- EXAMPLES: {{HitGroup = {HITGROUP_HEAD}, Animation = {ACT_FLINCH_HEAD}}, {HitGroup = {HITGROUP_LEFTARM}, Animation = {ACT_FLINCH_LEFTARM}}, {HitGroup = {HITGROUP_RIGHTARM}, Animation = {ACT_FLINCH_RIGHTARM}}, {HitGroup = {HITGROUP_LEFTLEG}, Animation = {ACT_FLINCH_LEFTLEG}}, {HitGroup = {HITGROUP_RIGHTLEG}, Animation = {ACT_FLINCH_RIGHTLEG}}}
 
 
 ENT.GunDamage = nil
 ENT.Vulnerability = nil
 ENT.Accuracy = 0.05
 
+ENT.AnimSets = {
+    ["Stand"] = {
+        ["Unalerted"] = (function(self)
+            self.AnimTbl_IdleStand = {ACT_IDLE}
+            self.AnimTbl_Walk = {ACT_WALK}
+            self.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK1} -- Melee Attack Animations
+            self.RunAnim = {ACT_RUN}
+            self.AnimTbl_Run = self.RunAnim
+            
+        end),
+        ["Alerted"] = (function(self)
+            self.AnimTbl_IdleStand = {ACT_IDLE_AGITATED}
+            self.AnimTbl_Walk = {ACT_WALK_AGITATED}
+            self.RunAnim = {ACT_RUN_AGITATED}
+            self.AnimTbl_Run = self.RunAnim
+            self.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK1} -- Melee Attack Animations
+        end),
+    },
+    ["Crawl"] = {
+        ["Unalerted"] = (function(self)
+            self.AnimTbl_IdleStand = {ACT_PRONE_IDLE}
+            self.AnimTbl_Walk = {ACT_PRONE_FORWARD}
+            self.RunAnim = {ACT_PRONE_FORWARD}
+            self.AnimTbl_Run = self.RunAnim
+            self.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK2} -- Melee Attack Animations
+
+        end),
+        ["Alerted"] = (function(self)
+            self.AnimTbl_IdleStand = {ACT_RANGE_ATTACK1_LOW}
+            self.AnimTbl_Walk = {ACT_PRONE_FORWARD}
+            self.RunAnim = {ACT_PRONE_FORWARD}
+            self.AnimTbl_Run = self.RunAnim
+            self.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK2} -- Melee Attack Animations
+        end)
+    }
+}
+
+ENT.SelectedAnimSet = "Stand"
+
+
+
 ENT.Limbs = {
     [500] = {
-        Health = 500,
+        Health = 10,
         bodygroup = 0,
-        gibs = {},
+        gibs = {"models/gibs/scanner_gib02.mdl", "models/gibs/scanner_gib02.mdl", "models/gibs/scanner_gib02.mdl","models/combine_helicopter/bomb_debris_3.mdl", "models/combine_helicopter/bomb_debris_3.mdl", "models/gibs/metal_gib1.mdl", "models/gibs/metal_gib5.mdl"},
         removed = false,
         extra = (function(self, dmginfo)
+            if (self.SelectedAnimSet=="Stand") then self:VJ_ACT_PLAYACTIVITY(ACT_FLINCH_CHEST, true, 1.5, false) end
+            local chestBone = self:GetBonePosition(self:LookupBone("Chest"))
+            print(chestBone)
+            self:EmitSound("phx/explode00.wav", 75, math.random(80, 120), .25)
+            ParticleEffect("bsg_mini_explosion01", chestBone, Angle(0,0,0))
+            ParticleEffectAttach("bsg_sparks_continous", PATTACH_POINT_FOLLOW, self, self:LookupAttachment("sparks01"))
+            ParticleEffectAttach("bsg_sparks_continous", PATTACH_POINT_FOLLOW, self, self:LookupAttachment("sparks02"))
+            self.DamageSound = CreateSound(self, "cylon/damage01.wav")
+            self.DamageSound:PlayEx(1, 100)
         end)
     },
     [501] = {
-        Health = 300,
+        Health = 150,
         bodygroup = 1,
         gibs = {"models/bsg/cylon_head.mdl"},
         removed = false,
@@ -75,43 +173,56 @@ ENT.Limbs = {
     [502] = {
         Health = 150,
         bodygroup = 2,
-        gibs = {"models/bsg/cylon_shoulder.mdl", "models/bsg/cylon_upperarm.mdl", "models/bsg/cylon_forearm.mdl"},
+        gibs = {"models/bsg/cylon_shoulder.mdl", "models/bsg/cylon_upperarm.mdl", "models/bsg/cylon_forearm.mdl",  "models/bsg/cylon_hand.mdl", "models/bsg/cylon_gun.mdl", "models/bsg/cylon_gun.mdl", "models/bsg/cylon_cannon.mdl"},
         removed = false,
         extra = (function(self, dmginfo)
-            self.HasMeleeAttack = false
+            if (self.SelectedAnimSet=="Stand") then self:VJ_ACT_PLAYACTIVITY(ACT_FLINCH_RIGHTARM, true, 1.5, false) end
+
             if (self.Limbs[503]["removed"] == true) then
                 self.HasRangeAttack = false
                 self.NoChaseAfterCertainRange = false
+                self.AnimTbl_MeleeAttack = {ACT_LEAP} -- Melee Attack Animations
+                self.MeleeAttackDistance = 250 -- How close does it have to be until it attacks?
+                self.MeleeAttackAnimationFaceEnemy = false -- Should it face the enemy while playing the melee attack animation?
+                self.HasDeathAnimation = false
+                self.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
+
             end
         end)
     },
     [503] = {
         Health = 150,
         bodygroup = 3,
-        gibs = {"models/bsg/cylon_shoulder.mdl", "models/bsg/cylon_upperarm.mdl", "models/bsg/cylon_forearm.mdl", "models/bsg/cylon_hand.mdl",},
+        gibs = {"models/bsg/cylon_shoulder.mdl", "models/bsg/cylon_upperarm.mdl", "models/bsg/cylon_forearm.mdl", "models/bsg/cylon_hand.mdl", "models/bsg/cylon_gun.mdl", "models/bsg/cylon_gun.mdl", "models/bsg/cylon_cannon.mdl"},
         removed = false,
         extra = (function(self, dmginfo)
+            if (self.SelectedAnimSet=="Stand") then self:VJ_ACT_PLAYACTIVITY(ACT_FLINCH_LEFTARM, true, 1.5, false) end
+
             if (self.Limbs[502]["removed"] == true) then
                 self.HasRangeAttack = false
                 self.NoChaseAfterCertainRange = false
+                self.AnimTbl_MeleeAttack = {ACT_LEAP} -- Melee Attack Animations
+                self.MeleeAttackDistance = 250 -- How close does it have to be until it attacks?
+                self.MeleeAttackAnimationFaceEnemy = false -- Should it face the enemy while playing the melee attack animation?
+                self.HasDeathAnimation = false
+                self.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
+
             end
         end)
     },
     [504] = {
         Health = 150,
         bodygroup = 4,
-        gibs = {"models/bsg/cylon_foot.mdl", "models/bsg/cylon_lowerleg.mdl", "models/bsg/cylon_upperleg.mdl", "models/bsg/cylon_hand.mdl",},
+        gibs = {"models/bsg/cylon_foot.mdl", "models/bsg/cylon_lowerleg.mdl", "models/bsg/cylon_upperleg.mdl",},
         removed = false,
         extra = (function(self, dmginfo)
             if (self.Limbs[505]["removed"] == true) then return end
-            self:VJ_ACT_PLAYACTIVITY("FallToCrawl", true, 1, false)
+            self.CanFlinch = 0
             self.HasDeathAnimation = false
-            self.AnimTbl_Walk = {ACT_PRONE_FORWARD} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-            self.AnimTbl_Run = {ACT_PRONE_FORWARD} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-            self.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK2} -- Melee Attack Animations
-            self.AnimTbl_IdleStand = {ACT_PRONE_IDLE} -- The idle animation table when AI is enabled | DEFAULT: {ACT_IDLE}
             self.RangeAttackAnimationStopMovement = true -- Should it stop moving when performing a range attack?
             self:SetCollisionBounds(Vector(-50, -50, 0), Vector(50, 50, 40))
+            self.SelectedAnimSet = "Crawl"
+            self:VJ_ACT_PLAYACTIVITY("StandToCrawl01", true, 1.5, false)
         end)
     },
     [505] = {
@@ -121,14 +232,12 @@ ENT.Limbs = {
         removed = false,
         extra = (function(self, dmginfo)
             if (self.Limbs[504]["removed"] == true) then return end
-            self:VJ_ACT_PLAYACTIVITY("FallToCrawl", true, 1, false)
+            self.CanFlinch = 0
+            self:VJ_ACT_PLAYACTIVITY("StandToCrawl01", true, 1.5, false)
             self.HasDeathAnimation = false
-            self.AnimTbl_Walk = {ACT_PRONE_FORWARD} -- Set the walking animations | Put multiple to let the base pick a random animation when it moves
-            self.AnimTbl_Run = {ACT_PRONE_FORWARD} -- Set the running animations | Put multiple to let the base pick a random animation when it moves
-            self.AnimTbl_MeleeAttack = {ACT_MELEE_ATTACK2} -- Melee Attack Animations
-            self.AnimTbl_IdleStand = {ACT_PRONE_IDLE} -- The idle animation table when AI is enabled | DEFAULT: {ACT_IDLE}
             self.RangeAttackAnimationStopMovement = true -- Should it stop moving when performing a range attack?
             self:SetCollisionBounds(Vector(-50, -50, 0), Vector(50, 50, 40))
+            self.SelectedAnimSet = "Crawl"
         end)
     },
 }
@@ -169,7 +278,33 @@ local inputs = {
         if (self.RotateSound) then self.RotateSound:Stop() end
         self:EmitSound("cylon/idle/Turn_stop.ogg", 80, math.random(75, 85), 0.4)
     end,
+    ["StabDirt"] = function(self)
+        self:EmitSound(self.SoundTbl_StabDirt[math.random(1, #self.SoundTbl_StabDirt)], 80, math.random(70, 90), 0.5)
+    end,
+    ["Crawl"] = function(self)
+        self:EmitSound(self.SoundTbl_Scrape[math.random(1, #self.SoundTbl_Scrape)], 80, math.random(70, 90), 0.5)
+    end,
+    ["Slash"] = function(self)
+        self:EmitSound("cylon/melee/slash01.ogg", 80, math.random(70, 90), 0.5)
+    end,
 }
+
+function ENT:EngageSuicideMode()
+end
+
+function ENT:CustomOnMeleeAttack_AfterStartTimer(seed) 
+    if (self.HasRangeAttack==true) then return end
+    timer.Simple(0.7, function()
+        self:TakeDamage(self:Health()-1)
+        local blast = DamageInfo()
+        blast:SetDamage(50)
+        blast:SetDamageType(DMG_BLAST)
+        util.BlastDamageInfo(blast, self:GetPos(), 1000)
+        
+    end)
+    
+end
+
 
 function ENT:UseConvars()
     self.GunDamageMult = GetConVar("vj_bsg_centurion_damage"):GetFloat()
@@ -215,13 +350,15 @@ function ENT:CustomOnTakeDamage_BeforeDamage(dmginfo, hitgroup)
             self:SetBodygroup(self.Limbs[hitgroup]["bodygroup"], 1)
             for k, v in pairs(self.Limbs[hitgroup]["gibs"]) do
                 local gib = ents.Create("obj_vj_gib")
-                gib.CollideSound = {}
                 gib.Collide_Decal = "None"
                 gib:SetModel(v)
                 gib:SetPos(dmginfo:GetDamagePosition())
-                gib:SetAngles(self:GetAngles())
+                gib:SetAngles(Angle(math.random(-180, 180), math.random(-180, 180), math.random(-180, 180)))
                 gib:Spawn()
-                gib:GetPhysicsObject():ApplyForceCenter(dmginfo:GetDamageForce())
+                gib:GetPhysicsObject():SetAngleVelocityInstantaneous(Vector(math.random(0, 5000)), Vector(math.random(0, 5000)),Vector(math.random(0, 5000)))
+                if (hitgroup != 500) then gib:GetPhysicsObject():ApplyForceCenter(dmginfo:GetDamageForce()) else gib:GetPhysicsObject():ApplyForceCenter(Vector(math.random(-300, 300), math.random(-300, 300), math.random(100, 300))) end
+                gib.Collide_Decal = ""
+                gib.CollideSound = {"physics/metal/metal_solid_impact_hard1.wav", "physics/metal/metal_solid_impact_hard2.wav", "physics/metal/metal_solid_impact_hard3.wav", "physics/metal/metal_solid_impact_hard4.wav", "physics/metal/metal_solid_impact_hard5.wav", }
             end
             self:RemoveAllDecals()
             self.Limbs[hitgroup]["extra"](self, dmginfo)
@@ -246,11 +383,13 @@ local muzzles = {
 
 
 local counter = 1
+local muzzle = 0
 function ENT:CustomRangeAttackCode() 
     if (!IsValid(self:GetEnemy())) then return end
     local pos = self:GetEnemy():GetPos() + self:GetEnemy():OBBCenter()
     self:VJ_ACT_PLAYACTIVITY("vjges_Shooting_Gesture", false, 0, true)
     self:EmitSound(self.SoundTbl_Fire[math.random(1, (#self.SoundTbl_Fire))], 90, math.random(80, 120), 1)
+    self:AddGesture(ACT_RANGE_ATTACK1, true)
     if (self.Limbs[502]["Health"] > 0) then
         muzzle = math.random(1, 3)
         ParticleEffectAttach("vj_rifle_full", 4, self, self:LookupAttachment(muzzles[muzzle]))
@@ -283,27 +422,75 @@ function ENT:CustomRangeAttackCode()
     end
 end
 
+local runAnim = nil
 function ENT:CustomOnThink()
-    if (self.Limbs[504]["Health"] > 0 and self.Limbs[505]["Health"] > 0) then
-        if (self:GetEnemy()) then
-            local distance = self:GetPos():Distance(self:GetEnemy():GetPos())
-            if (distance < self.RangeDistance and distance > self.RangeToMeleeDistance) then
-                self.AnimTbl_IdleStand = {ACT_IDLE_AGITATED}
-                self.AnimTbl_Walk = {ACT_WALK_AGITATED}
-                self.AnimTbl_Run = {ACT_WALK_AGITATED}
-            else
-                self.AnimTbl_IdleStand = {ACT_IDLE_AGITATED}
-                self.AnimTbl_Walk = {ACT_WALK_AGITATED}
-                self.AnimTbl_Run = {ACT_RUN_AGITATED}
-            end
+    if (self:GetEnemy() and self.HasRangeAttack==true) then
+        local distance = self:GetPos():Distance(self:GetEnemy():GetPos())
+        self.AnimSets[self.SelectedAnimSet]["Alerted"](self)
+        if (distance < self.RangeDistance and distance > self.RangeToMeleeDistance) then
+            
+            self.AnimTbl_Run = self.AnimTbl_Walk
         else
-            self.AnimTbl_IdleStand = {ACT_IDLE}
-            self.AnimTbl_Walk = {ACT_WALK}
-            self.AnimTbl_Run = {ACT_RUN}
+            self.AnimTbl_Run = self.RunAnim
         end
+    else
+        self.AnimSets[self.SelectedAnimSet]["Unalerted"](self)
+        if (self.HasRangeAttack==false) then self.AnimTbl_MeleeAttack = {ACT_LEAP} end -- Melee Attack Animations
     end
+    self:SetIdleAnimation(self.AnimTbl_IdleStand)
 end
 
 function ENT:CustomOnInitialKilled(dmginfo, hitgroup)
     self:SetSkin(1)
+end
+
+
+
+function ENT:SetUpGibesOnDeath(dmginfo, hitgroup)
+    local gibParts = {
+        "models/bsg/cylon_chest.mdl",
+        "models/bsg/cylon_collar.mdl",
+        "models/bsg/cylon_pelvis.mdl",
+        "models/bsg/cylon_stomach.mdl",
+    }
+    for k, v in pairs(self.Limbs) do
+        if (v.removed==false) then
+            table.Add(gibParts, v.gibs)
+        end
+    end
+    for k, v in pairs(gibParts) do
+        local gib = ents.Create("obj_vj_gib")
+        gib:SetModel(v)
+        gib:SetPos(self:GetPos() + self:OBBCenter())
+        gib:SetAngles(Angle(math.random(-180, 180), math.random(-180, 180), math.random(-180, 180)))
+        gib:Spawn()
+        gib:GetPhysicsObject():SetVelocityInstantaneous(Vector(math.random(-200, 200),math.random(-200, 200),math.random(50, 600)))
+        gib:GetPhysicsObject():SetAngleVelocityInstantaneous(Vector(math.random(0, 5000)), Vector(math.random(0, 5000)),Vector(math.random(0, 5000)))
+        gib.Collide_Decal = ""
+        gib.CollideSound = {"physics/metal/metal_solid_impact_hard1.wav", "physics/metal/metal_solid_impact_hard2.wav", "physics/metal/metal_solid_impact_hard3.wav", "physics/metal/metal_solid_impact_hard4.wav", "physics/metal/metal_solid_impact_hard5.wav", }
+    end
+
+	return true, {DeathAnim = false, AllowCorpse = false} -- Return to true if it gibbed!
+	/*--------------------------------------
+		-- Extra Features --
+			Extra features allow you to have more control over the gibbing system.
+			--/// Types \\\--
+				AllowCorpse -- Should it allow corpse to spawn?
+				DeathAnim -- Should it allow death animation?
+			--/// Implementing it \\\--
+				1. Let's use type DeathAnim as an example. NOTE: You can have as many types as you want!
+				2. Put a comma next to return. 		===> return true,
+				3. Make a table after the comma. 	===> return true, {}
+				4. Put the type(s) that you want.	===> return true, {DeathAnim=true}
+				5. And you are done!
+				Example with multiple types:		===> return true, {DeathAnim=true,AllowCorpse=true}
+	--------------------------------------*/
+end
+
+function ENT:CustomOnMeleeAttack_BeforeStartTimer(seed) 
+    self:EmitSound("cylon/melee/ready01.ogg", 80, math.random(80, 120), 1)
+end
+
+function ENT:CustomOnRemove()
+    if (self.DamageSound) then self.DamageSound:Stop() end
 end
