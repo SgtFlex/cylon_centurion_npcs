@@ -8,7 +8,7 @@ local VJExists = file.Exists("lua/autorun/vj_base_autorun.lua","GAME")
 if VJExists == true then
 	include('autorun/vj_controls.lua')
 
-	local vCat = "Battle Star Galactica" -- Category, you can also set a category individually by replacing the vCat with a string value
+	local vCat = "Battlestar Galactica" -- Category, you can also set a category individually by replacing the vCat with a string value
 	
 	 -- Comment box start
 	--NOTE: The following code is commented out so the game doesn't run it! When copying one of the options below, make sure to put it outside of the comment box!

@@ -58,6 +58,7 @@ ENT.NextAnyAttackTime_Range = 0.075 -- How much time until it can use any attack
 ENT.RangeAttackAnimationStopMovement = false -- Should it stop moving when performing a range attack?
 ENT.RangeAttackAnimationFaceEnemy = true -- Should it face the enemy while playing the range attack animation?
 ENT.DisableRangeAttackAnimation = true -- if true, it will disable the animation code
+ENT.AnimTbl_WeaponAttack = {ACT_IDLE_AGITATED} -- Animation played when the SNPC does weapon attack
 
 
 
@@ -145,7 +146,7 @@ ENT.SelectedAnimSet = "Stand"
 
 ENT.Limbs = {
     [500] = {
-        Health = 10,
+        Health = 300,
         bodygroup = 0,
         gibs = {"models/gibs/scanner_gib02.mdl", "models/gibs/scanner_gib02.mdl", "models/gibs/scanner_gib02.mdl","models/combine_helicopter/bomb_debris_3.mdl", "models/combine_helicopter/bomb_debris_3.mdl", "models/gibs/metal_gib1.mdl", "models/gibs/metal_gib5.mdl"},
         removed = false,
@@ -204,8 +205,7 @@ ENT.Limbs = {
                 self.AnimTbl_MeleeAttack = {ACT_LEAP} -- Melee Attack Animations
                 self.MeleeAttackDistance = 250 -- How close does it have to be until it attacks?
                 self.MeleeAttackAnimationFaceEnemy = false -- Should it face the enemy while playing the melee attack animation?
-                self.HasDeathAnimation = false
-                self.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
+                
 
             end
         end)
@@ -295,14 +295,15 @@ end
 function ENT:CustomOnMeleeAttack_AfterStartTimer(seed) 
     if (self.HasRangeAttack==true) then return end
     timer.Simple(0.7, function()
-        self:TakeDamage(self:Health()-1)
+        self.HasDeathAnimation = false
+        self.HasDeathRagdoll = false -- If set to false, it will not spawn the regular ragdoll of the SNPC
         local blast = DamageInfo()
         blast:SetDamage(50)
         blast:SetDamageType(DMG_BLAST)
         util.BlastDamageInfo(blast, self:GetPos(), 1000)
-        
+        self:TakeDamage(self:Health()-1)
+        self:SetUpGibesOnDeath()
     end)
-    
 end
 
 
@@ -447,6 +448,9 @@ end
 
 
 function ENT:SetUpGibesOnDeath(dmginfo, hitgroup)
+    self:EmitSound("phx/explode00.wav", 75, math.random(80, 120), .25)
+    util.ScreenShake(self:GetPos(), 5, 1, 0.5, 300)
+    ParticleEffect("bsg_explosion", self:GetPos() + self:OBBCenter(), Angle(0,0,0))
     local gibParts = {
         "models/bsg/cylon_chest.mdl",
         "models/bsg/cylon_collar.mdl",

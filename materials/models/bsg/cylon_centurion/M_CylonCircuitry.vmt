@@ -15,24 +15,36 @@
 	"$detailblendmode" 0	
 	$color "[0 0 0]"
 	$avar 0
+	$bvar 0
+	"$selfillum" 1
+	$selfillummask "models\bsg\cylon_centurion\circuit_g"
+	$selfillumtint "[1 1 1]"
 	proxies
 	{
+		EntityRandom
+		{
+			scale 1
+			resultVar $avar
+		}
 		sine
 		{
-			sineperiod	2.3
+			sineperiod	1.5
 			sinemin		0
 			sinemax		1
-			timeoffset 2
-			resultvar	"$avar"
+			timeoffset $avar
+			resultvar	"$bvar"
 		}
 
 		sine
 		{
-			sineperiod	1.5
+			sineperiod	.35
 			sinemin		.75
 			sinemax		3
-			timeoffset		$avar
-			resultvar	"$color"
+			timeoffset		$bvar
+			resultvar	"$selfillumtint[1]"
 		}
 	}
+	
+
+
 }
